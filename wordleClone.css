@@ -1,0 +1,30 @@
+* {
+    background: #ECECEC;
+    font-family: helvetica;
+}
+
+div {
+    text-align: center;
+}
+
+h1 {
+    font-weight: 500;
+}
+
+a {
+    text-align: left;
+    font-size: x-large;
+    position: absolute;
+    left: 25px;
+    top: 15px;
+    color: blue;
+    border: 3px solid;
+}
+
+#resetButton{
+    font-size: larger;
+}
+
+#winLossText {
+    font-size: 30px;
+}
