@@ -4,7 +4,6 @@ resetButton.addEventListener("click", resetGame);
 document.addEventListener("keydown", handleKeyPress);
 
 // setup canvas and constants
-const canvas = document.getElementById("wordleCanvas");
 const ctx = canvas.getContext("2d");
 
 const CANVAS_WIDTH = Math.floor(canvas.getBoundingClientRect().width);
