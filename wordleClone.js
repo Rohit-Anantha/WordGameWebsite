@@ -89,12 +89,21 @@ function handleKeyPress(e) {
             }
         } else if (e.keyCode == 13) { // check if pressed enter
             // finalize guess if possible
-            if (lettersTyped == 5 && ALL_WORDS.includes(guess.toLowerCase())) {
-                console.log("Enter pressed, there are enough letters, and word is valid");
-                handleEnter();
-            } else if (lettersTyped == 5 && !ALL_WORDS.includes(guess.toLowerCase())) {
-                console.log("Enter is pressed and there are enough letters but the word is invalid.");
+
+            var request = new XMLHttpRequest()
+
+            request.open('GET', 'https://dictionaryapi.com/api/v3/references/collegiate/json/' + guess.toLowerCase() + '?key=ca6d5bad-825b-4d20-824c-3441f01a52ec', true)
+            request.onload = function () {
+                // Begin accessing JSON data here
+                var data = JSON.parse(this.response)
+
+                data.forEach(word => {
+                    console.log(word)
+                })
+            
             }
+
+            request.send()
         }
     }
 }
@@ -125,7 +134,7 @@ function handleBackspace() {
 function handleEnter() {
     checkGuess().then(() => {
         numGuesses++;
-        
+
         if (correct || numGuesses >= 6) {
             gameIsGoing = false;
             console.log(`Game finished, word was correct: ${correct}, number of guesses: ${numGuesses}`);
@@ -137,7 +146,7 @@ function handleEnter() {
                 winLossText.textContent = `Wow, You lost after using all ${numGuesses} guesses, lol :P`;
             }
         }
-    
+
         lettersTyped = 0;
         guess = "";
         correct = true;
