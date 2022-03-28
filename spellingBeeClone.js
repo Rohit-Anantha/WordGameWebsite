@@ -83,8 +83,12 @@ function initGame() {
 function handleKeyPress(e) {
     if (e.keyCode >= 65 && e.keyCode <= 90) {
         if (currentWord.length < MAX_GUESS_LENGTH) {
-            handleLetter(e.keyCode);
-            updateText();
+            const letter = String.fromCharCode(code);
+
+            if (letters.includes(letter)) {
+                currentWord += letter;
+                updateText();
+            }
         }
         console.log("letter pressed");
     } else if (e.keyCode == 8) { // backspace
@@ -97,12 +101,6 @@ function handleKeyPress(e) {
         }
         console.log("enter pressed");
     }
-}
-
-function handleLetter(code) {
-    const letter = String.fromCharCode(code);
-
-    currentWord += letter;
 }
 
 function updateText() {
@@ -118,17 +116,6 @@ function clearGuessText() {
 }
 
 function currentWordIsValid() {
-    const url = "https://api.wordnik.com/v4/word.json/" + currentWord + "/definitions?limit=200&includeRelated=false&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5";
-
-    $.ajax({
-        type: "GET",
-        url: url
-    }).done(function (result) {
-        console.log("word exists");
-    }).fail(function () {
-        console.log("word does not exist");
-    });
-
     return true;
 }
 
