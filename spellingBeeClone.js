@@ -8,7 +8,6 @@ const VOWELS = Array.from("AEIOU");
 
 const ctx = canvas.getContext("2d");
 ctx.font = "30px Arial";
-ctx.textAlign = "center";
 
 const TILE_CONSTS = {
     size: 50, 
@@ -40,20 +39,45 @@ const GUESS_COORDS = {
 
 const MAX_GUESS_LENGTH = 20;
 
+const SCORE_TEXT_COORDS = {
+    score: {
+        x: 430,
+        y: 50
+    },
+    wordsFound: {
+        x: 430,
+        y: 80
+    },
+    wordList: {
+        x: 450,
+        y: 80
+    }
+}
+
 // game vars
 const letters = []; // index 0 is center letter, rest start at top and go around
 const wordsFound = [];
-let score = 0;
-let currentWord = "";
+let score;
+let currentWord;
 
 initGame();
 
 function initGame() {
+    letters.length = 0;
+    wordsFound.length = 0;
+    score = 0;
+    currentWord = "";
+
     pickLetters(false);
     console.log(`Letters chosen: ${letters.join(', ')}`);
 
     drawBlankTiles();
+    console.log("Blank tiles drawn");
     writeLettersOnTiles();
+    console.log("Letters written on tiles");
+
+    SCORE_TEXT_COORDS.wordList.y = SCORE_TEXT_COORDS.wordsFound.y;
+    updateScore();
 }
 
 function handleKeyPress(e) {
@@ -62,9 +86,16 @@ function handleKeyPress(e) {
             handleLetter(e.keyCode);
             updateText();
         }
-    } else if (e.keyCode == 8) {
+        console.log("letter pressed");
+    } else if (e.keyCode == 8) { // backspace
         currentWord = currentWord.slice(0, -1);
         updateText();
+        console.log("backspace pressed");
+    } else if (e.keyCode == 13) { // enter
+        if (currentWord.length > 2 && currentWordIsValid()) {
+            handleEnter();
+        }
+        console.log("enter pressed");
     }
 }
 
@@ -75,14 +106,54 @@ function handleLetter(code) {
 }
 
 function updateText() {
-    clearText();
+    clearGuessText();
     ctx.fillStyle = "black";
+    ctx.textAlign = "center";
     ctx.fillText(currentWord, GUESS_COORDS.x, GUESS_COORDS.y);
 }
 
-function clearText() {
+function clearGuessText() {
     ctx.fillStyle = "white";
     ctx.fillRect(0, 0, 420, 100);
+}
+
+function currentWordIsValid() {
+    const url = "https://api.wordnik.com/v4/word.json/" + currentWord + "/definitions?limit=200&includeRelated=false&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5";
+
+    $.ajax({
+        type: "GET",
+        url: url
+    }).done(function (result) {
+        console.log("word exists");
+    }).fail(function () {
+        console.log("word does not exist");
+    });
+
+    return true;
+}
+
+function handleEnter() {
+    wordsFound.push(currentWord);
+    score += currentWord.length;
+    updateScore();
+    updateText();
+    currentWord = "";
+    clearGuessText();
+}
+
+function updateScore() {
+    clearScoreText();
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
+    ctx.fillText(`Score: ${score}`, SCORE_TEXT_COORDS.score.x, SCORE_TEXT_COORDS.score.y);
+    ctx.fillText(`Words Found: ${wordsFound.length}`, SCORE_TEXT_COORDS.wordsFound.x, SCORE_TEXT_COORDS.wordsFound.y);
+    ctx.fillText(`${currentWord}`, SCORE_TEXT_COORDS.wordList.x, SCORE_TEXT_COORDS.wordList.y);
+    SCORE_TEXT_COORDS.wordList.y += 30;
+}
+
+function clearScoreText() {
+    ctx.fillStyle = "white";
+    ctx.fillRect(SCORE_TEXT_COORDS.score.x, 0, canvas.width - SCORE_TEXT_COORDS.score.x, 80);
 }
 
 function pickLetters(debuggging_print_letters) {
@@ -138,6 +209,7 @@ function writeLettersOnTiles() {
 
 function writeOnTile(offset, letter) {
     ctx.fillStyle = "black";
+    ctx.textAlign = "center";
     ctx.fillText(letter, TILE_CONSTS.centerCoords.x + offset.x + TILE_CONSTS.letterOffsets.x, TILE_CONSTS.centerCoords.y + offset.y + TILE_CONSTS.letterOffsets.y);
 }
 
