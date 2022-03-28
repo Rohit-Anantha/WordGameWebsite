@@ -1,0 +1,20 @@
+* {
+    background: #FFFFFF;
+    font-family: helvetica;
+    text-align: center;
+}
+
+a {
+    text-align: left;
+    font-size: x-large;
+    position: absolute;
+    left: 25px;
+    top: 15px;
+    color: blue;
+    border: 3px solid;
+}
+
+canvas {
+    color: black;
+    border: 3px solid;
+}

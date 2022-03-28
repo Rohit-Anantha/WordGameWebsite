@@ -34,6 +34,7 @@ ul {
     --bg: var(--light-color);
     --fontColor: var(--dark-color);
 }
+
 .dark-theme {
     --bg: var(--dark-color); 
     --fontColor:var(--light-color);
